@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gemini AI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .response {
+            margin-top: 20px;
+        }
+        .response-text {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Gemini AI</h1>
+    <form id="prompt-form">
+        <label for="prompt">Enter your prompt:</label>
+        <input type="text" id="prompt" name="prompt" required>
+        <button type="submit">Submit</button>
+    </form>
+    <button id="voice-button">Speak</button>
+    <div class="response" id="response"></div>
+    <script>
+        const form = document.getElementById('prompt-form');
+        const voiceButton = document.getElementById('voice-button');
+        const responseDiv = document.getElementById('response');
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const response = await fetch('/generate', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            displayResponse(data);
+        };
+
+        voiceButton.onclick = () => {
+            const recognition = new webkitSpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.start();
+            recognition.onresult = (event) => {
+                document.getElementById('prompt').value = event.results[0][0].transcript;
+            };
+        };
+
+        function displayResponse(text) {
+            responseDiv.innerHTML = `
+                <div class="response-text">${text}</div>
+                <button onclick="readAloud('${text.replace(/'/g, "\\'").replace(/"/g, '\\"')}')">🔊 Read Aloud</button>
+            `;
+        }
+
+        function readAloud(text) {
+            const speech = new SpeechSynthesisUtterance(text);
+            speech.lang = 'en-US';
+            window.speechSynthesis.speak(speech);
+        }
+    </script>
+</body>
+</html>
