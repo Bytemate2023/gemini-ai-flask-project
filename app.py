@@ -1,16 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import google.generativeai as genai
 import sqlite3
-import os
-
-# Configure the Generative AI model
-model = genai.GenerativeModel('gemini-pro')
-genai.configure(api_key="your_api")
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
-# Create a database to store users and search history
+# Configure the Generative AI model
+genai.configure(api_key="your_api_key_heree")
+model = genai.GenerativeModel('gemini-pro')
+
 def init_db():
     with sqlite3.connect('users.db') as conn:
         c = conn.cursor()
@@ -33,6 +31,12 @@ def init_db():
         conn.commit()
 
 init_db()
+
+@app.route('/get_username', methods=['GET'])
+def get_username():
+    if 'username' in session:
+        return jsonify({'username': session['username']})
+    return jsonify({'username': None})
 
 @app.route('/')
 def home():
@@ -90,7 +94,8 @@ def generate():
     if 'username' not in session:
         return redirect(url_for('login'))
     if request.method == 'POST':
-        prompt = request.form['prompt']
+        data = request.json
+        prompt = data.get('prompt')
         try:
             response = model.generate_content(prompt)
             response_text = response.text
@@ -103,22 +108,11 @@ def generate():
             conn.commit()
             conn.close()
             
-            return jsonify(response_text)
+            return jsonify({'response_text': response_text})
         except Exception as e:
-            return jsonify("Sorry, but Gemini didn't want to answer that!")
+            print("Error generating response:", e)
+            return jsonify({'response_text': "Sorry, but Gemini didn't want to answer that!"})
     return redirect(url_for('chatbot'))
-
-@app.route('/history', methods=['GET'])
-def history():
-    if 'username' not in session:
-        return redirect(url_for('login'))
-    username = session['username']
-    conn = sqlite3.connect('users.db')
-    c = conn.cursor()
-    c.execute('SELECT prompt, response FROM history WHERE username=? ORDER BY id DESC LIMIT 5', (username,))
-    history = c.fetchall()
-    conn.close()
-    return jsonify(history)
 
 if __name__ == '__main__':
     app.run(debug=True)
