@@ -3,10 +3,10 @@ import google.generativeai as genai
 import sqlite3
 
 app = Flask(__name__)
-app.secret_key = 'supersecretkey'
+app.secret_key = 'AIzaSyCIpdpABbBVQ713C3F0dFpsRr_gyVasnCA'
 
 # Configure the Generative AI model
-genai.configure(api_key="your_api_key_heree")
+genai.configure(api_key="AIzaSyCIpdpABbBVQ713C3F0dFpsRr_gyVasnCA")
 model = genai.GenerativeModel('gemini-pro')
 
 def init_db():

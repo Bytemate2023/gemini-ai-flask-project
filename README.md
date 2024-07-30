@@ -1,4 +1,3 @@
-
 # Gemini AI Chatbot
 
 
@@ -38,7 +37,7 @@ In the terminal, execute the following command:
 python app.py
 ```
 
-This will launch a web app locally. Open your browser and navigate to the provided address (usually http://localhost:5000/) to interact with the Gemini AI chatbots.
+This will launch a web app locally. Open your browser and navigate to the provided address (usually http://localhost:5000/) to interact with the Gemini AI chatbot.
 
 Feel free to explore and customize the code according to your needs. Contributions are welcome!
 
