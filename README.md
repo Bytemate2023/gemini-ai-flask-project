@@ -31,7 +31,7 @@ You can obtain your API key from [here](https://makersuite.google.com/app/apikey
 pip install -r requirements.txt
 ```
 ### Step 4: Run the Web App
-In the terminal, execute the following command:
+In the terminal, execute the following command::
 
 ```
 python app.py
